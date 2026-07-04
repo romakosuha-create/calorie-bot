@@ -1,8 +1,8 @@
 """Единая точка входа: FastAPI (API + статика мини-аппа) + бот в фоне."""
 import asyncio
 import logging
-import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api.routes import router
 from app.bot.main import run_polling
-from app.core.config import settings
+from app.core.config import BACKEND_ROOT, settings
 from app.db.base import init_models
 
 
@@ -47,5 +47,9 @@ async def health():
 
 
 # Статика мини-аппа (собранный React) — раздаётся с того же адреса, что и API.
-if os.path.isdir(settings.static_dir):
-    app.mount("/", StaticFiles(directory=settings.static_dir, html=True), name="miniapp")
+# Путь резолвим абсолютно (относительно backend/), чтобы не зависеть от рабочей директории.
+_static = Path(settings.static_dir)
+if not _static.is_absolute():
+    _static = BACKEND_ROOT / _static
+if _static.is_dir():
+    app.mount("/", StaticFiles(directory=str(_static), html=True), name="miniapp")

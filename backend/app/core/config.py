@@ -1,5 +1,10 @@
 """Настройки приложения (читаются из .env)."""
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Корень бэкенда (.../backend) — для абсолютных путей независимо от рабочей директории
+BACKEND_ROOT = Path(__file__).resolve().parents[2]
 
 
 class Settings(BaseSettings):

@@ -2,20 +2,16 @@
 
 Наш код лежит в подпапке backend/. Этот файл в корне репозитория нужен,
 чтобы платформа (которая ищет main.py в корне) корректно запустила единый
-сервис: FastAPI (API + статичный мини-апп) + бот (polling) — всё из backend/.
+сервис: FastAPI (API + статичный мини-апп) + бот (polling).
 
-Работает и как `python main.py`, и как `uvicorn main:app`.
+Пути к статике и БД внутри приложения абсолютные, поэтому рабочая директория
+не важна. Работает и как `python main.py`, и как `uvicorn main:app`.
 """
 import os
 import sys
 
-BASE = os.path.dirname(os.path.abspath(__file__))
-BACKEND = os.path.join(BASE, "backend")
-
-# Переходим в backend/, чтобы относительные пути (static/, data/) резолвились там
-os.chdir(BACKEND)
-sys.path.insert(0, BACKEND)
-os.makedirs("data", exist_ok=True)  # каталог для SQLite
+BACKEND = os.path.join(os.path.dirname(os.path.abspath(__file__)), "backend")
+sys.path.insert(0, BACKEND)  # чтобы пакет `app` импортировался
 
 from app.main import app  # noqa: E402  экспортируем app для `uvicorn main:app`
 
