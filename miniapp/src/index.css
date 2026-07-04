@@ -1,0 +1,62 @@
+@import "tailwindcss";
+@import "@fontsource-variable/manrope";
+
+/* ===== Дизайн-токены: тёмный премиум + золото ===== */
+@theme {
+  --font-sans: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Поверхности (тёплый near-black, без чистого #000) */
+  --color-base: #0b0b0d;
+  --color-surface: #141417;
+  --color-elevated: #1b1b1f;
+  --color-line: #26262b;
+
+  /* Текст */
+  --color-ink: #f4f3f1;
+  --color-muted: #8b8b93;
+
+  /* Единственный бренд-акцент — золото */
+  --color-gold: #e7b44c;
+  --color-gold-soft: #3a2f16;
+
+  /* Семантические цвета макросов (категории данных) */
+  --color-protein: #4e9bff;
+  --color-fat: #ff8a3d;
+  --color-carb: #a78bfa;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-base);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  /* тёмная тема на весь документ — без инверсий (Theme Lock) */
+  color-scheme: dark;
+}
+
+/* Числа — табличные, чтобы не «прыгали» */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Тонкая золотая подсветка сверху карточки */
+.ring-top-gold {
+  box-shadow: inset 0 1px 0 rgb(231 180 76 / 0.14);
+}
+
+/* Скрыть скроллбар у горизонтальных лент */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -1,0 +1,16 @@
+# Node
+**/node_modules
+miniapp/dist
+
+# Python
+**/__pycache__
+**/*.pyc
+backend/.venv
+backend/data
+**/*.sqlite3
+**/*.db
+
+# Секреты и локальное
+**/.env
+.git
+PLAN.md
