@@ -29,7 +29,7 @@ dp = Dispatcher()
 def miniapp_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="🍎 Открыть счётчик", web_app=WebAppInfo(url=settings.miniapp_url))]
+            [InlineKeyboardButton(text="🍎 Открыть счётчик", web_app=WebAppInfo(url=settings.effective_miniapp_url))]
         ]
     )
 
@@ -53,7 +53,7 @@ async def run_polling() -> None:
     bot = Bot(token=settings.bot_token)
     try:
         await bot.set_chat_menu_button(
-            menu_button=MenuButtonWebApp(text="Счётчик", web_app=WebAppInfo(url=settings.miniapp_url))
+            menu_button=MenuButtonWebApp(text="Счётчик", web_app=WebAppInfo(url=settings.effective_miniapp_url))
         )
     except Exception as e:  # noqa: BLE001
         logging.warning("Не удалось установить кнопку-меню: %s", e)

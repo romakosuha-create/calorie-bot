@@ -13,6 +13,21 @@ class Settings(BaseSettings):
     # Telegram
     bot_token: str = ""
     miniapp_url: str = "https://example.com"
+    # bothost автоматически задаёт WEBHOOK_URL вида https://<домен>/webhook —
+    # используем его, чтобы определить публичный адрес мини-аппа без ручной настройки.
+    webhook_url: str = ""
+
+    @property
+    def effective_miniapp_url(self) -> str:
+        """Реальный адрес мини-аппа: явный MINIAPP_URL, иначе домен из WEBHOOK_URL."""
+        if self.miniapp_url and "example.com" not in self.miniapp_url:
+            return self.miniapp_url.rstrip("/")
+        if self.webhook_url:
+            base = self.webhook_url.rstrip("/")
+            if base.endswith("/webhook"):
+                base = base[: -len("/webhook")]
+            return base.rstrip("/")
+        return self.miniapp_url
 
     # БД
     database_url: str = "sqlite+aiosqlite:///./calorie_bot.db"
