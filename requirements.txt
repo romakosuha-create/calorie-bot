@@ -1,0 +1,2 @@
+# Корневой requirements для авто-сборки bothost (устанавливает зависимости бэкенда)
+-r backend/requirements.txt
