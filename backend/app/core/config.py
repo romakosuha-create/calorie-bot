@@ -19,14 +19,18 @@ class Settings(BaseSettings):
 
     @property
     def effective_miniapp_url(self) -> str:
-        """Реальный адрес мини-аппа: явный MINIAPP_URL, иначе домен из WEBHOOK_URL."""
-        if self.miniapp_url and "example.com" not in self.miniapp_url:
-            return self.miniapp_url.rstrip("/")
+        """Реальный адрес мини-аппа.
+
+        На bothost WEBHOOK_URL всегда отражает актуальный домен контейнера,
+        поэтому он в приоритете (иначе устаревший MINIAPP_URL из .env ломает кнопку).
+        """
         if self.webhook_url:
             base = self.webhook_url.rstrip("/")
             if base.endswith("/webhook"):
                 base = base[: -len("/webhook")]
             return base.rstrip("/")
+        if self.miniapp_url and "example.com" not in self.miniapp_url:
+            return self.miniapp_url.rstrip("/")
         return self.miniapp_url
 
     # БД
