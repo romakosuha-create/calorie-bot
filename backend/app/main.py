@@ -29,6 +29,8 @@ async def lifespan(app: FastAPI):
         bot_task.cancel()
 
 
+VERSION = "0.3.0"
+
 app = FastAPI(title="Счётчик калорий", lifespan=lifespan)
 
 app.add_middleware(
@@ -43,7 +45,8 @@ app.include_router(router)
 
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    # miniapp_url и version помогают проверить деплой снаружи
+    return {"status": "ok", "version": VERSION, "miniapp_url": settings.effective_miniapp_url}
 
 
 # Статика мини-аппа (собранный React) — раздаётся с того же адреса, что и API.
