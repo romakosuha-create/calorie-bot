@@ -14,7 +14,7 @@ const MACROS = [
 export function Summary() {
   const today = new Date();
   const [selected, setSelected] = useState((today.getDay() + 6) % 7);
-  const [water, setWater] = useState(3);
+  const [water, setWater] = useState(600); // мл
   const day = mockDay; // TODO: api.getDay(date) в Telegram
 
   const fiber = { value: Math.round(day.consumed.fiber), target: Math.round(day.targets.fiber) };
@@ -108,7 +108,7 @@ export function Summary() {
       </section>
 
       {/* Вода */}
-      <WaterTracker filled={water} onChange={setWater} />
+      <WaterTracker ml={water} onChange={setWater} />
 
       {/* Тренировки */}
       <section className="rounded-2xl border border-line bg-surface p-4">
