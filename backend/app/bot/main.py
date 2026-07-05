@@ -54,7 +54,7 @@ async def run_polling() -> None:
     logging.info("Mini App URL для кнопок: %s", settings.effective_miniapp_url)
     try:
         await bot.set_chat_menu_button(
-            menu_button=MenuButtonWebApp(text="Счётчик", web_app=WebAppInfo(url=settings.effective_miniapp_url))
+            menu_button=MenuButtonWebApp(text="Добавить", web_app=WebAppInfo(url=settings.effective_miniapp_url))
         )
     except Exception as e:  # noqa: BLE001
         logging.warning("Не удалось установить кнопку-меню: %s", e)
