@@ -7,6 +7,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 # Корень бэкенда (.../backend) — для абсолютных путей независимо от рабочей директории
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
 
+# Публичный HTTPS-адрес сервиса (домен bothost). bothost НЕ пробрасывает WEBHOOK_URL
+# в процесс, а MINIAPP_URL в окружении может устареть, поэтому держим актуальный домен
+# здесь. Переопределяется переменной окружения PUBLIC_URL, если задана.
+DEFAULT_PUBLIC_URL = "https://bot-1783192606-7565-romakosuha.bothost.tech"
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
@@ -20,22 +25,12 @@ class Settings(BaseSettings):
 
     @property
     def effective_miniapp_url(self) -> str:
-        """Реальный адрес мини-аппа.
+        """Публичный адрес мини-аппа для кнопок бота.
 
-        На bothost переменная WEBHOOK_URL (https://<домен>/webhook) всегда отражает
-        актуальный домен контейнера. Читаем её НАПРЯМУЮ из окружения (надёжнее, чем
-        через pydantic-поле) и берём в приоритет — иначе устаревший MINIAPP_URL,
-        «вшитый» при создании бота, ломает кнопку.
+        Берём PUBLIC_URL из окружения, иначе — зашитый актуальный домен.
+        Так устаревший MINIAPP_URL, «вшитый» bothost при создании бота, не ломает кнопку.
         """
-        wh = os.environ.get("WEBHOOK_URL") or self.webhook_url
-        if wh:
-            base = wh.rstrip("/")
-            if base.endswith("/webhook"):
-                base = base[: -len("/webhook")]
-            return base.rstrip("/")
-        if self.miniapp_url and "example.com" not in self.miniapp_url:
-            return self.miniapp_url.rstrip("/")
-        return self.miniapp_url
+        return (os.environ.get("PUBLIC_URL") or DEFAULT_PUBLIC_URL).rstrip("/")
 
     # БД
     database_url: str = "sqlite+aiosqlite:///./calorie_bot.db"
