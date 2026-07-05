@@ -58,6 +58,7 @@ class User(Base):
     protein_target: Mapped[int | None] = mapped_column(Integer)
     fat_target: Mapped[int | None] = mapped_column(Integer)
     carb_target: Mapped[int | None] = mapped_column(Integer)
+    water_goal_ml: Mapped[int] = mapped_column(Integer, default=1600)
 
     onboarded: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

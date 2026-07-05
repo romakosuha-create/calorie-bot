@@ -1,5 +1,5 @@
 import { getInitData } from "./telegram";
-import type { DaySummary, Food } from "./types";
+import type { DaySummary, Food, WeightPoint } from "./types";
 
 const BASE = import.meta.env.VITE_API_URL ?? "";
 
@@ -34,4 +34,14 @@ export const api = {
   deleteMeal: (id: number) => request(`/api/meals/${id}`, { method: "DELETE" }),
   searchFoods: (q: string) => request<Food[]>(`/api/foods/search?q=${encodeURIComponent(q)}`),
   barcode: (code: string) => request<Food>(`/api/foods/barcode/${code}`),
+  patchMe: (body: unknown) =>
+    request<Me>("/api/me", { method: "PATCH", body: JSON.stringify(body) }),
+  setWater: (body: unknown) =>
+    request("/api/water", { method: "POST", body: JSON.stringify(body) }),
+  addWorkout: (body: unknown) =>
+    request("/api/workouts", { method: "POST", body: JSON.stringify(body) }),
+  deleteWorkout: (id: number) => request(`/api/workouts/${id}`, { method: "DELETE" }),
+  setWeight: (body: unknown) =>
+    request("/api/weight", { method: "POST", body: JSON.stringify(body) }),
+  getWeights: () => request<WeightPoint[]>("/api/weight"),
 };

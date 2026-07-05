@@ -45,5 +45,13 @@ export interface DaySummary {
   consumed: Macro;
   burned_kcal: number;
   remaining_kcal: number;
+  water_ml: number;
+  water_goal_ml: number;
   meals: Meal[];
+  workouts: Workout[];
+}
+
+export interface WeightPoint {
+  entry_date: string;
+  weight_kg: number;
 }

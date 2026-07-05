@@ -1,32 +1,36 @@
 import { useState } from "react";
-import { Drop, Plus, Minus } from "@phosphor-icons/react";
+import { Drop, Plus, Minus, PencilSimple, Check } from "@phosphor-icons/react";
 
 const GLASS_ML = 200;
-const GLASSES = 8;
-const GOAL_ML = GLASS_ML * GLASSES; // 1600 мл
 const QUICK = [200, 300, 500];
 
 interface WaterTrackerProps {
-  ml: number; // выпито, в миллилитрах
+  ml: number;
+  goalMl: number;
   onChange: (ml: number) => void;
+  onGoalChange: (ml: number) => void;
 }
 
-/** Трекер воды: стаканы тапом + быстрые кнопки + ввод своего значения. */
-export function WaterTracker({ ml, onChange }: WaterTrackerProps) {
+/** Трекер воды: стаканы + быстрые кнопки + своё значение + редактируемая норма. */
+export function WaterTracker({ ml, goalMl, onChange, onGoalChange }: WaterTrackerProps) {
   const [custom, setCustom] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [goalDraft, setGoalDraft] = useState(String(goalMl));
+
+  const glasses = Math.min(16, Math.max(1, Math.round(goalMl / GLASS_ML)));
   const filled = Math.round(ml / GLASS_ML);
-
   const set = (v: number) => onChange(Math.max(0, Math.round(v)));
-
-  const toggleGlass = (i: number) => {
-    // тап по последнему заполненному снимает его, иначе доливаем до i+1 стаканов
-    set((filled === i + 1 ? i : i + 1) * GLASS_ML);
-  };
 
   const addCustom = () => {
     const v = parseInt(custom, 10);
     if (!Number.isNaN(v) && v !== 0) set(ml + v);
     setCustom("");
+  };
+
+  const saveGoal = () => {
+    const v = parseInt(goalDraft, 10);
+    if (!Number.isNaN(v) && v >= 200) onGoalChange(v);
+    setEditing(false);
   };
 
   return (
@@ -36,20 +40,43 @@ export function WaterTracker({ ml, onChange }: WaterTrackerProps) {
           <Drop size={18} weight="fill" className="text-gold" />
           <span className="text-sm font-semibold">Вода</span>
         </div>
-        <span className="text-sm font-semibold tnum">
-          <span className="text-gold">{ml}</span>
-          <span className="text-muted"> / {GOAL_ML} мл</span>
-        </span>
+        {editing ? (
+          <div className="flex items-center gap-2">
+            <input
+              value={goalDraft}
+              onChange={(e) => setGoalDraft(e.target.value.replace(/[^0-9]/g, ""))}
+              onKeyDown={(e) => e.key === "Enter" && saveGoal()}
+              inputMode="numeric"
+              autoFocus
+              className="w-20 rounded-lg border border-line bg-elevated px-2 py-1 text-right text-sm outline-none tnum"
+            />
+            <span className="text-xs text-muted">мл</span>
+            <button onClick={saveGoal} className="grid h-7 w-7 place-items-center rounded-lg bg-gold text-base active:scale-90">
+              <Check size={14} weight="bold" />
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => {
+              setGoalDraft(String(goalMl));
+              setEditing(true);
+            }}
+            className="flex items-center gap-1.5 text-sm font-semibold tnum active:scale-95 transition-transform"
+          >
+            <span className="text-gold">{ml}</span>
+            <span className="text-muted"> / {goalMl} мл</span>
+            <PencilSimple size={13} className="text-muted" />
+          </button>
+        )}
       </div>
 
-      {/* Стаканы */}
       <div className="grid grid-cols-8 gap-1.5">
-        {Array.from({ length: GLASSES }).map((_, i) => {
+        {Array.from({ length: glasses }).map((_, i) => {
           const active = i < filled;
           return (
             <button
               key={i}
-              onClick={() => toggleGlass(i)}
+              onClick={() => set((filled === i + 1 ? i : i + 1) * GLASS_ML)}
               aria-label={`Стакан ${i + 1}`}
               className={`grid h-11 place-items-center rounded-lg border transition-all active:scale-90 ${
                 active ? "border-gold/40 bg-gold-soft" : "border-line bg-elevated"
@@ -61,7 +88,6 @@ export function WaterTracker({ ml, onChange }: WaterTrackerProps) {
         })}
       </div>
 
-      {/* Быстрые кнопки + своё значение */}
       <div className="mt-3 flex flex-wrap gap-2">
         {QUICK.map((q) => (
           <button
@@ -103,8 +129,8 @@ export function WaterTracker({ ml, onChange }: WaterTrackerProps) {
       </div>
 
       <div className="mt-3 flex justify-between text-xs text-muted tnum">
-        <span>{filled} из {GLASSES} стаканов</span>
-        <span>{(ml / 1000).toFixed(2)} л / {(GOAL_ML / 1000).toFixed(1)} л</span>
+        <span>{filled} из {glasses} стаканов</span>
+        <span>{(ml / 1000).toFixed(2)} л / {(goalMl / 1000).toFixed(1)} л</span>
       </div>
     </section>
   );

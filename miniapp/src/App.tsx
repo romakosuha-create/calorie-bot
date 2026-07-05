@@ -8,6 +8,7 @@ import { AiChat } from "./pages/AiChat";
 import { Onboarding } from "./pages/Onboarding";
 import { IS_PREVIEW } from "./lib/telegram";
 import { api } from "./lib/api";
+import { DataProvider } from "./lib/store";
 import type { Anketa } from "./lib/nutrition";
 
 const ONBOARD_KEY = "cb_onboarded";
@@ -49,15 +50,17 @@ export default function App() {
   }
 
   return (
-    <div className="mx-auto min-h-[100dvh] max-w-md bg-base">
-      <main className="px-4 pb-28 pt-6">
-        {tab === "summary" && <Summary />}
-        {tab === "diary" && <Diary />}
-        {tab === "ai" && <AiChat />}
-        {tab === "stats" && <Stats />}
-        {tab === "profile" && <Profile />}
-      </main>
-      <BottomNav active={tab} onChange={setTab} />
-    </div>
+    <DataProvider>
+      <div className="mx-auto min-h-[100dvh] max-w-md bg-base">
+        <main className="px-4 pb-28 pt-6">
+          {tab === "summary" && <Summary />}
+          {tab === "diary" && <Diary />}
+          {tab === "ai" && <AiChat />}
+          {tab === "stats" && <Stats />}
+          {tab === "profile" && <Profile />}
+        </main>
+        <BottomNav active={tab} onChange={setTab} />
+      </div>
+    </DataProvider>
   );
 }

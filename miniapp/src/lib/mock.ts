@@ -1,4 +1,4 @@
-import type { DaySummary, Food, Meal, Workout } from "./types";
+import type { DaySummary, Food, Meal, WeightPoint, Workout } from "./types";
 
 /** Реалистичные mock-данные для локального preview (не Jane-Doe). */
 export const mockMeals: Meal[] = [
@@ -21,12 +21,20 @@ export const mockDay: DaySummary = {
     carb: mockMeals.reduce((s, m) => s + m.carb, 0),
     fiber: mockMeals.reduce((s, m) => s + m.fiber, 0),
   },
-  burned_kcal: 340,
-  get remaining_kcal() {
-    return this.targets.kcal + this.burned_kcal - this.consumed.kcal;
-  },
+  burned_kcal: mockWorkouts.reduce((s, w) => s + w.kcal_burned, 0),
+  remaining_kcal: 0, // пересчитается в store
+  water_ml: 600,
+  water_goal_ml: 1600,
   meals: mockMeals,
+  workouts: mockWorkouts,
 };
+
+export const mockWeights: WeightPoint[] = [
+  { entry_date: "2026-06-20", weight_kg: 79.4 },
+  { entry_date: "2026-06-27", weight_kg: 78.8 },
+  { entry_date: "2026-07-01", weight_kg: 78.2 },
+  { entry_date: "2026-07-04", weight_kg: 78.0 },
+];
 
 /** Калории по дням недели для экрана «Статистика». */
 export const mockWeek = [
