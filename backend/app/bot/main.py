@@ -51,6 +51,7 @@ async def run_polling() -> None:
         return
 
     bot = Bot(token=settings.bot_token)
+    logging.info("Mini App URL для кнопок: %s", settings.effective_miniapp_url)
     try:
         await bot.set_chat_menu_button(
             menu_button=MenuButtonWebApp(text="Счётчик", web_app=WebAppInfo(url=settings.effective_miniapp_url))

@@ -1,4 +1,5 @@
 """Настройки приложения (читаются из .env)."""
+import os
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -21,11 +22,14 @@ class Settings(BaseSettings):
     def effective_miniapp_url(self) -> str:
         """Реальный адрес мини-аппа.
 
-        На bothost WEBHOOK_URL всегда отражает актуальный домен контейнера,
-        поэтому он в приоритете (иначе устаревший MINIAPP_URL из .env ломает кнопку).
+        На bothost переменная WEBHOOK_URL (https://<домен>/webhook) всегда отражает
+        актуальный домен контейнера. Читаем её НАПРЯМУЮ из окружения (надёжнее, чем
+        через pydantic-поле) и берём в приоритет — иначе устаревший MINIAPP_URL,
+        «вшитый» при создании бота, ломает кнопку.
         """
-        if self.webhook_url:
-            base = self.webhook_url.rstrip("/")
+        wh = os.environ.get("WEBHOOK_URL") or self.webhook_url
+        if wh:
+            base = wh.rstrip("/")
             if base.endswith("/webhook"):
                 base = base[: -len("/webhook")]
             return base.rstrip("/")
