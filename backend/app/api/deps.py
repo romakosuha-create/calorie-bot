@@ -1,4 +1,6 @@
 """Зависимости FastAPI: определение текущего пользователя по Telegram initData."""
+import logging
+
 from fastapi import Depends, Header, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,6 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import validate_init_data
 from app.db.base import get_db
 from app.models import User
+
+log = logging.getLogger("auth")
 
 
 async def get_current_user(
@@ -17,14 +21,17 @@ async def get_current_user(
     Проверяет подпись, находит/создаёт пользователя.
     """
     if not authorization or not authorization.startswith("tma "):
+        log.warning("AUTH: нет заголовка initData (authorization=%r)", authorization)
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Нет initData")
 
     init_data = authorization[4:]
     tg_user = validate_init_data(init_data)
     if not tg_user:
+        log.warning("AUTH: initData не прошёл проверку (длина=%d)", len(init_data))
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Неверная подпись initData")
 
     tg_id = int(tg_user["id"])
+    log.info("AUTH: ок, tg_id=%s", tg_id)
     user = (await db.execute(select(User).where(User.tg_id == tg_id))).scalar_one_or_none()
     if user is None:
         user = User(

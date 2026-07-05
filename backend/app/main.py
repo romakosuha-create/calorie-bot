@@ -29,7 +29,7 @@ async def lifespan(app: FastAPI):
         bot_task.cancel()
 
 
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 
 app = FastAPI(title="Счётчик калорий", lifespan=lifespan)
 
