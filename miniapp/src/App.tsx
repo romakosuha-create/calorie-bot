@@ -25,8 +25,12 @@ export default function App() {
     }
     api
       .getMe()
-      .then((me) => setOnboarded(me.onboarded))
-      .catch(() => setOnboarded(false));
+      .then((me) => {
+        setOnboarded(me.onboarded);
+        if (me.onboarded) localStorage.setItem(ONBOARD_KEY, "1");
+      })
+      // при сбое сети не сбрасываем анкету, если она уже была пройдена
+      .catch(() => setOnboarded(localStorage.getItem(ONBOARD_KEY) === "1"));
   }, []);
 
   const handleOnboardingDone = async (a: Anketa) => {
