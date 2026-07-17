@@ -60,7 +60,7 @@ class MealIn(BaseModel):
     entry_date: date
     meal_type: MealType = MealType.snack
     name: str
-    grams: float = Field(gt=0, default=100)
+    grams: float = Field(ge=0, default=100)  # 0 допустим для ручного ввода без веса
     kcal: float = Field(ge=0)
     protein: float = Field(ge=0, default=0)
     fat: float = Field(ge=0, default=0)
